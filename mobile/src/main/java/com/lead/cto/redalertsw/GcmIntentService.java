@@ -30,7 +30,7 @@ public class GcmIntentService extends IntentService {//implements GoogleApiClien
     private static final String TAG = "GcmIntentService";
     public static int NOTIFICATION_ID = 1;
     private NotificationManager mNotificationManager;
-    private GoogleApiClient mGoogleApiClient;
+
 
     NotificationCompat.Builder builder;
 
@@ -39,7 +39,7 @@ public class GcmIntentService extends IntentService {//implements GoogleApiClien
 
     public GcmIntentService() {
         super("GcmIntentService");
-        initGoogleApiClient();
+
     }
 
     @Override
@@ -165,13 +165,7 @@ public class GcmIntentService extends IntentService {//implements GoogleApiClien
 
     /*******************************************************************************************/
 
-    private void initGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder( this )
-                .addApi( Wearable.API )
-                .build();
 
-        mGoogleApiClient.connect();
-    }
 
 //    @Override //ConnectionCallbacks
 //    public void onConnected(Bundle connectionHint) {
@@ -207,7 +201,7 @@ public class GcmIntentService extends IntentService {//implements GoogleApiClien
     private Collection<String> getNodes() {
         HashSet<String> results = new HashSet<String>();
         NodeApi.GetConnectedNodesResult nodes =
-                Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).await();
+                Wearable.NodeApi.getConnectedNodes(MainActivity.mGoogleApiClient).await();
 
         for (Node node : nodes.getNodes()) {
             results.add(node.getId());
@@ -230,7 +224,7 @@ public class GcmIntentService extends IntentService {//implements GoogleApiClien
 
     private void sendStartActivityMessage(String node) {
         Wearable.MessageApi.sendMessage(
-                mGoogleApiClient, node, START_ACTIVITY_PATH, new byte[0]).setResultCallback(
+                MainActivity.mGoogleApiClient, node, START_ACTIVITY_PATH, new byte[0]).setResultCallback(
                 new ResultCallback<MessageApi.SendMessageResult>() {
                     @Override
                     public void onResult(MessageApi.SendMessageResult sendMessageResult) {

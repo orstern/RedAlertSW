@@ -1,5 +1,6 @@
 package com.lead.cto.redalertsw;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -36,7 +37,7 @@ public class MainActivity extends ActionBarActivity {
     private static final String PROPERTY_APP_VERSION = "appVersion";
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
-
+    public static GoogleApiClient mGoogleApiClient;
     private static final String START_ACTIVITY = "/start_activity";
 
     /**
@@ -61,6 +62,7 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        initGoogleApiClient();
         setContentView(R.layout.activity_main);
 
         Context context = getApplicationContext();
@@ -339,4 +341,12 @@ public class MainActivity extends ActionBarActivity {
 
 
 
+
+    private void initGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this )
+                .addApi( Wearable.API )
+                .build();
+
+        mGoogleApiClient.connect();
+    }
 }
