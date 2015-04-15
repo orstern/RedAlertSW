@@ -4,20 +4,14 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
-import android.widget.GridView;
 import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -29,23 +23,12 @@ import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.message.BasicNameValuePair;
-
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
-public class MainActivity extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks {
+public class MainActivity extends ActionBarActivity {
     public static final String TAG = "MainActivityMobile";
 
     public static final String EXTRA_MESSAGE = "message";
@@ -54,7 +37,6 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
 
-    private GoogleApiClient mApiClient;
     private static final String START_ACTIVITY = "/start_activity";
 
     /**
@@ -82,8 +64,6 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
         setContentView(R.layout.activity_main);
 
         Context context = getApplicationContext();
-
-        initGoogleApiClient();
 
         // Check device for Play Services APK. If check succeeds, proceed with
         //  GCM registration.
@@ -358,53 +338,5 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     }
 
 
-    /*******************************************************************************************/
 
-    private void initGoogleApiClient() {
-        mApiClient = new GoogleApiClient.Builder( this )
-                .addApi( Wearable.API )
-                .build();
-
-        mApiClient.connect();
-    }
-
-    @Override
-    public void onConnected(Bundle bundle) {
-        sendMessage( START_ACTIVITY, "" );
-    }
-
-    private void sendMessage( final String path, final String text ) {
-        new Thread( new Runnable() {
-            @Override
-            public void run() {
-                NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes( mApiClient ).await();
-                for(Node node : nodes.getNodes()) {
-                    MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(
-                            mApiClient, node.getId(), path, text.getBytes() ).await();
-                }
-
-                runOnUiThread( new Runnable() {
-                    @Override
-                    public void run() {
-
-                        //mEditText.setText( "" );
-                    }
-                });
-            }
-        }).start();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mApiClient.disconnect();
-    }
-
-
-
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
-    }
 }

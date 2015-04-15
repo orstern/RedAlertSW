@@ -1,30 +1,45 @@
 package com.lead.cto.redalertsw;
 
 import android.app.IntentService;
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.Context;
 import android.graphics.Color;
 import android.media.RingtoneManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PowerManager;
-import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.wearable.DataApi;
+import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.MessageEvent;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
+import com.google.android.gms.wearable.Wearable;
 
-public class GcmIntentService extends IntentService {
-    public static final int NOTIFICATION_ID = 1;
+import java.util.Collection;
+import java.util.HashSet;
+
+public class GcmIntentService extends IntentService {//implements GoogleApiClient.ConnectionCallbacks, MessageApi.MessageListener, NodeApi.NodeListener, DataApi.DataListener{
+    private static final String TAG = "GcmIntentService";
+    public static int NOTIFICATION_ID = 1;
     private NotificationManager mNotificationManager;
+    private GoogleApiClient mGoogleApiClient;
+
     NotificationCompat.Builder builder;
 
+    private static final String START_ACTIVITY_PATH = "/start-activity";
     private static final String redAlertHebrew = "צבע אדום";
 
     public GcmIntentService() {
         super("GcmIntentService");
+        initGoogleApiClient();
     }
 
     @Override
@@ -58,9 +73,15 @@ public class GcmIntentService extends IntentService {
                 // Post notification of received message.
                 String strAlertInCities = parseMessage(extras.getString("cities"));
                 String strRelevantCities = getRelevantCities(strAlertInCities);
-                if (strRelevantCities.length() > 0) {
-                    sendNotification(redAlertHebrew + ": " + strRelevantCities);
-                }
+                //if (strRelevantCities.length() > 0) {
+                    sendNotification(strRelevantCities);
+
+                    Intent newIntent = new Intent(this, RedAlertActivity.class);
+                    newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(newIntent);
+
+                    new StartWearableActivityTask().execute();
+                //}
 
             }
         }
@@ -77,13 +98,9 @@ public class GcmIntentService extends IntentService {
         mNotificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
-                new Intent(this, MainActivity.class), 0);
-
-
         Intent push = new Intent();
         push.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
-        push.setClass( this, MainActivity.class );
+        push.setClass( this, RedAlertActivity.class );
         PendingIntent pi = PendingIntent.getActivity( this, 0, push, PendingIntent.FLAG_ONE_SHOT );
 
 
@@ -91,21 +108,22 @@ public class GcmIntentService extends IntentService {
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.common_signin_btn_icon_dark)
                         .setContentTitle(redAlertHebrew)
-                        .setStyle(new NotificationCompat.BigTextStyle()
-                                .bigText(msg))
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
                         .setContentText(msg)
                         .setContentInfo(msg)
-                .setVibrate(new long[] {1000, 1000})
-                .setLights(Color.RED, 1, 1)
-                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                .setAutoCancel(true)
-                .setFullScreenIntent(pi, true);
+                        .setVibrate(new long[] {1000, 1000})
+                        .setLights(Color.RED, 3000, 3000)
+                        .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                        .setAutoCancel(true)
+                        .setGroup("RedAlertActivity")
+                        .setPriority(NotificationCompat.PRIORITY_MAX)
+                        .setTicker(redAlertHebrew + ": " + msg)
+                        .setSubText("גש למרחב המוגן")
+                        .setFullScreenIntent(pi, true);
 
+
+        mNotificationManager.notify(NOTIFICATION_ID++, mBuilder.build());
         wakeScreen();
-
-
-        mBuilder.setContentIntent(contentIntent);
-        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
     }
 
     private String parseMessage(String strCities) {
@@ -125,7 +143,7 @@ public class GcmIntentService extends IntentService {
     }
 
     private void wakeScreen() {
-        PowerManager.WakeLock screenOn = ((PowerManager)getSystemService(POWER_SERVICE)).newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "RedAlert");
+        PowerManager.WakeLock screenOn = ((PowerManager)getSystemService(POWER_SERVICE)).newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "RedAlertActivity");
         screenOn.acquire(10000);
     }
 
@@ -142,5 +160,86 @@ public class GcmIntentService extends IntentService {
         }
 
         return strRelevantCities;
+    }
+
+
+    /*******************************************************************************************/
+
+    private void initGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder( this )
+                .addApi( Wearable.API )
+                .build();
+
+        mGoogleApiClient.connect();
+    }
+
+//    @Override //ConnectionCallbacks
+//    public void onConnected(Bundle connectionHint) {
+////        mResolvingError = false;
+////        mStartActivityBtn.setEnabled(true);
+////        mSendPhotoBtn.setEnabled(mCameraSupported);
+////        Wearable.DataApi.addListener(mGoogleApiClient, this);
+//        Wearable.MessageApi.addListener(mGoogleApiClient, this);
+//        Wearable.NodeApi.addListener(mGoogleApiClient, this);
+//    }
+//
+//    @Override //NodeListener
+//    public void onPeerConnected(final Node peer) {
+//
+//
+//    }
+//
+//    @Override //MessageListener
+//    public void onMessageReceived(final MessageEvent messageEvent) {
+//
+//    }
+//
+//    @Override //ConnectionCallbacks
+//    public void onConnectionSuspended(int cause) {
+//
+//    }
+//
+//    @Override //NodeListener
+//    public void onPeerDisconnected(final Node peer) {
+//
+//    }
+
+    private Collection<String> getNodes() {
+        HashSet<String> results = new HashSet<String>();
+        NodeApi.GetConnectedNodesResult nodes =
+                Wearable.NodeApi.getConnectedNodes(mGoogleApiClient).await();
+
+        for (Node node : nodes.getNodes()) {
+            results.add(node.getId());
+        }
+
+        return results;
+    }
+
+    private class StartWearableActivityTask extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... args) {
+            Collection<String> nodes = getNodes();
+            for (String node : nodes) {
+                sendStartActivityMessage(node);
+            }
+            return null;
+        }
+    }
+
+    private void sendStartActivityMessage(String node) {
+        Wearable.MessageApi.sendMessage(
+                mGoogleApiClient, node, START_ACTIVITY_PATH, new byte[0]).setResultCallback(
+                new ResultCallback<MessageApi.SendMessageResult>() {
+                    @Override
+                    public void onResult(MessageApi.SendMessageResult sendMessageResult) {
+                        if (!sendMessageResult.getStatus().isSuccess()) {
+                            Log.e(TAG, "Failed to send message with status code: "
+                                    + sendMessageResult.getStatus().getStatusCode());
+                        }
+                    }
+                }
+        );
     }
 }
