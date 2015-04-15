@@ -1,6 +1,8 @@
 package com.lead.cto.redalertsw;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -10,7 +12,11 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.GridView;
+import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -65,6 +71,9 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
 
     String regid;
 
+    String[] cities;
+
+    public static ArrayList<String> userCities = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,10 +108,24 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
        // spinner.setAdapter(adapter);
 
         // Filling Spinnner (Combo Box) with cities
-        MultiSelectionSpinner spinner = (MultiSelectionSpinner) findViewById(R.id.cities_spinner);
-        spinner.setItems(getResources().getStringArray(R.array.cities_array));
+        //MultiSelectionSpinner spinner = (MultiSelectionSpinner) findViewById(R.id.cities_spinner);
+        //spinner.setItems(getResources().getStringArray(R.array.cities_array));
 
+        // Filling auto complete text field with cities
+        // Get a reference to the AutoCompleteTextView in the layout
+        AutoCompleteTextView textView = (AutoCompleteTextView) findViewById(R.id.txtCities);
+        // Get the string array
+        cities = getResources().getStringArray(R.array.cities_array);
+        // Create the adapter and set it to the AutoCompleteTextView
+        ArrayAdapter<String> txtCitiesAdapter =
+                new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, cities);
+        textView.setAdapter(txtCitiesAdapter);
 
+        ListView listView = (ListView) findViewById(R.id.lstCities);
+        ArrayAdapter<String> grdCitiesAdapter = new ArrayAdapter<String>(
+                this, android.R.layout.simple_list_item_1, userCities);
+
+        listView.setAdapter(grdCitiesAdapter);
     }
 
     // You need to do the Play Services APK check here too.
@@ -112,7 +135,64 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
         checkPlayServices();
     }
 
+    public void btnAddCityOnClick(View v) {
 
+        // Get the city the user inputted
+        String strCity = ((AutoCompleteTextView) findViewById(R.id.txtCities)).getText().toString();
+
+        // Removing whitespace
+        strCity = strCity.replaceAll("\\s+$", "");
+
+        boolean bWasFound = false;
+
+        // Check if city exists
+        for (String strCurrCity : cities) {
+            if (strCity.equals(strCurrCity)) {
+                bWasFound = true;
+            }
+        }
+
+        // If city doesn't exist we show an error message, else add it to GridView
+        if (bWasFound) {
+
+            // Adding city to grid
+            if (!userCities.contains(strCity)) {
+                userCities.add(strCity);
+
+                ListView listView = (ListView) findViewById(R.id.lstCities);
+
+                ArrayAdapter<String> grdCitiesAdapter = new ArrayAdapter<String>(
+                        this, android.R.layout.simple_list_item_1, userCities);
+
+                listView.setAdapter(grdCitiesAdapter);
+            }
+            else {
+                new AlertDialog.Builder(MainActivity.this)
+                        .setTitle(getResources().getString(R.string.city_already_added_title))
+                        .setMessage(getResources().getString(R.string.city_already_added_message))
+                        .setCancelable(false)
+                        .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // whatever...
+                            }
+                        }).create().show();
+            }
+        }
+        else {
+            new AlertDialog.Builder(MainActivity.this)
+                    .setTitle(getResources().getString(R.string.city_not_exist_title))
+                    .setMessage(getResources().getString(R.string.city_not_exist_message))
+                    .setCancelable(false)
+                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // whatever...
+                        }
+                    }).create().show();
+        }
+
+    }
 
     /**
      * Check the device to make sure it has the Google Play Services APK. If
@@ -174,14 +254,16 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
      * @return Application's version code from the {@code PackageManager}.
      */
     private static int getAppVersion(Context context) {
-        try {
+        /*try {
             PackageInfo packageInfo = context.getPackageManager()
                     .getPackageInfo(context.getPackageName(), 0);
             return packageInfo.versionCode;
         } catch (PackageManager.NameNotFoundException e) {
             // should never happen
             throw new RuntimeException("Could not get package name: " + e);
-        }
+        }*/
+
+        return 1;
     }
 
     /**
@@ -239,23 +321,23 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
      * using the 'from' address in the message.
      */
     private void sendRegistrationIdToBackend() {
-        HttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost("192.168.20.176:9000");
-
-        try {
-            // Add your data
-            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
-            nameValuePairs.add(new BasicNameValuePair("regId", regid));
-            httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
-
-            // Execute HTTP Post Request
-            HttpResponse response = httpclient.execute(httppost);
-
-        } catch (ClientProtocolException e) {
-            // TODO Auto-generated catch block
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-        }
+//        HttpClient httpclient = new DefaultHttpClient();
+//        HttpPost httppost = new HttpPost("192.168.20.176:9000");
+//
+//        try {
+//            // Add your data
+//            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+//            nameValuePairs.add(new BasicNameValuePair("regId", regid));
+//            httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+//
+//            // Execute HTTP Post Request
+//            HttpResponse response = httpclient.execute(httppost);
+//
+//        } catch (ClientProtocolException e) {
+//            // TODO Auto-generated catch block
+//        } catch (IOException e) {
+//            // TODO Auto-generated catch block
+//        }
     }
 
     /**

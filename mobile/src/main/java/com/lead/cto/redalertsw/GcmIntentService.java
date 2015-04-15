@@ -56,14 +56,19 @@ public class GcmIntentService extends IntentService {
                 //TODO: Add function that check the location and start alarm if necessary
 
                 // Post notification of received message.
-                String strCities = parseMessage(extras.getString("cities"));
+                String strAlertInCities = parseMessage(extras.getString("cities"));
+                String strRelevantCities = getRelevantCities(strAlertInCities);
+                if (strRelevantCities.length() > 0) {
+                    sendNotification(redAlertHebrew + ": " + strRelevantCities);
+                }
 
-                sendNotification(redAlertHebrew + ": " + strCities);
             }
         }
         // Release the wake lock provided by the WakefulBroadcastReceiver.
         GcmBroadcastReceiver.completeWakefulIntent(intent);
     }
+
+
 
     // Put the message into a notification and post it.
     // This is just one simple example of what you might choose to do with
@@ -75,6 +80,13 @@ public class GcmIntentService extends IntentService {
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
                 new Intent(this, MainActivity.class), 0);
 
+
+        Intent push = new Intent();
+        push.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
+        push.setClass( this, MainActivity.class );
+        PendingIntent pi = PendingIntent.getActivity( this, 0, push, PendingIntent.FLAG_ONE_SHOT );
+
+
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.common_signin_btn_icon_dark)
@@ -82,10 +94,12 @@ public class GcmIntentService extends IntentService {
                         .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(msg))
                         .setContentText(msg)
+                        .setContentInfo(msg)
                 .setVibrate(new long[] {1000, 1000})
-                .setLights(Color.RED, 1000, 1000)
+                .setLights(Color.RED, 1, 1)
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                .setPriority(NotificationCompat.PRIORITY_MAX);
+                .setAutoCancel(true)
+                .setFullScreenIntent(pi, true);
 
         wakeScreen();
 
@@ -113,5 +127,20 @@ public class GcmIntentService extends IntentService {
     private void wakeScreen() {
         PowerManager.WakeLock screenOn = ((PowerManager)getSystemService(POWER_SERVICE)).newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "RedAlert");
         screenOn.acquire(10000);
+    }
+
+    private String getRelevantCities(String strAlertInCities) {
+        String strRelevantCities = "";
+        for(String city: MainActivity.userCities) {
+            if (strAlertInCities.contains(city)) {
+                strRelevantCities += city + ", ";
+            }
+        }
+
+        if (strRelevantCities.length() > 2) {
+            strRelevantCities = strRelevantCities.substring(0, strRelevantCities.length() -2);
+        }
+
+        return strRelevantCities;
     }
 }
