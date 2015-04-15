@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">RedAlertSW</string>
+    <string name="app_name">
+        צבע אדום
+    </string>
     <string name="lblEmergencyContact">
         מספר איש קשר חירום
     </string>
@@ -8,6 +10,21 @@
     </string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="add_city_button">
+        הוסף עיר
+    </string>
+    <string name="city_already_added_title">
+        עיר כבר נוספה
+    </string>
+    <string name="city_already_added_message">
+        העיר שבחרת כבר נוספה לערים שלך
+    </string>
+    <string name="city_not_exist_title">
+        עיר לא קיימת
+    </string>
+    <string name="city_not_exist_message">
+        העיר שבחרת אינה קיימת במאגר הנתונים, אנא בדוק האם יש שגיאת כתיב בעיר שברצונך להוסיף
+    </string>
 <string name="country_prompt">
     בחר עיר
 </string>
