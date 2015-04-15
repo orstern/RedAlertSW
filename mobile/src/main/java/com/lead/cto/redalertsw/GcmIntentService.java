@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.os.AsyncTask;
@@ -24,8 +25,10 @@ import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 public class GcmIntentService extends IntentService {//implements GoogleApiClient.ConnectionCallbacks, MessageApi.MessageListener, NodeApi.NodeListener, DataApi.DataListener{
     private static final String TAG = "GcmIntentService";
@@ -104,8 +107,17 @@ public class GcmIntentService extends IntentService {//implements GoogleApiClien
         push.setClass( this, RedAlertActivity.class );
         PendingIntent pi = PendingIntent.getActivity( this, 0, push, PendingIntent.FLAG_UPDATE_CURRENT );
 
+        Bitmap background = BitmapFactory.decodeResource(getResources(),
+                R.drawable.sirenbackground);
 
+        List<NotificationCompat.Action> actions = new ArrayList<NotificationCompat.Action>();
+        actions.add(new NotificationCompat.Action(R.drawable.sosicon, getString(R.string.get_help), pi));
+        actions.add(new NotificationCompat.Action(R.drawable.missile, getString(R.string.report_missile_fall), pi));
 
+        NotificationCompat.WearableExtender wearableExtender =
+                new NotificationCompat.WearableExtender()
+                        .setBackground(background)
+                        .addActions(actions);
 
 
         NotificationCompat.Builder mBuilder =
@@ -114,7 +126,6 @@ public class GcmIntentService extends IntentService {//implements GoogleApiClien
                         .setContentTitle(redAlertHebrew)
                         .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
                         .setContentText(msg)
-                        .setContentInfo(msg)
                         .setVibrate(new long[] {1000, 1000})
                         .setLights(Color.RED, 3000, 3000)
                         .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
@@ -123,7 +134,7 @@ public class GcmIntentService extends IntentService {//implements GoogleApiClien
                         .setPriority(NotificationCompat.PRIORITY_MAX)
                         .setTicker(redAlertHebrew + ": " + msg)
                         .setFullScreenIntent(pi, true)
-                        .addAction(R.drawable.sirenbackground, getString(R.string.get_help), pi);
+                        .extend(wearableExtender);
 
 
         mNotificationManager.notify(NOTIFICATION_ID++, mBuilder.build());
