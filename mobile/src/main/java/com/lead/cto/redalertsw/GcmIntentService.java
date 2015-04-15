@@ -5,6 +5,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.os.AsyncTask;
@@ -76,11 +77,11 @@ public class GcmIntentService extends IntentService {//implements GoogleApiClien
                 //if (strRelevantCities.length() > 0) {
                     sendNotification(strRelevantCities);
 
-                    Intent newIntent = new Intent(this, RedAlertActivity.class);
-                    newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(newIntent);
-
-                    new StartWearableActivityTask().execute();
+//                    Intent newIntent = new Intent(this, RedAlertActivity.class);
+//                    newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//                    startActivity(newIntent);
+//
+//                    new StartWearableActivityTask().execute();
                 //}
 
             }
@@ -101,7 +102,10 @@ public class GcmIntentService extends IntentService {//implements GoogleApiClien
         Intent push = new Intent();
         push.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
         push.setClass( this, RedAlertActivity.class );
-        PendingIntent pi = PendingIntent.getActivity( this, 0, push, PendingIntent.FLAG_ONE_SHOT );
+        PendingIntent pi = PendingIntent.getActivity( this, 0, push, PendingIntent.FLAG_UPDATE_CURRENT );
+
+
+
 
 
         NotificationCompat.Builder mBuilder =
@@ -119,7 +123,8 @@ public class GcmIntentService extends IntentService {//implements GoogleApiClien
                         .setPriority(NotificationCompat.PRIORITY_MAX)
                         .setTicker(redAlertHebrew + ": " + msg)
                         .setSubText("גש למרחב המוגן")
-                        .setFullScreenIntent(pi, true);
+                        .setFullScreenIntent(pi, true)
+                        .addAction(R.drawable.ic_plusone_standard_off_client, getString(R.string.get_help), pi);
 
 
         mNotificationManager.notify(NOTIFICATION_ID++, mBuilder.build());

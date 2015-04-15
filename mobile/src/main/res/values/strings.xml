@@ -30,7 +30,13 @@
 </string>
 
     <string name="title_activity_red_alert">RedAlert</string>
-    <string name="dummy_button">Dummy Button</string>
+    <string name="red_alert_hebrew">
+        צבע אדום
+    </string>
+    <string name="get_help">
+        הזעק עזרה
+    </string>
+
     <string name="dummy_content">DUMMY\nCONTENT</string>
 
 </resources>
