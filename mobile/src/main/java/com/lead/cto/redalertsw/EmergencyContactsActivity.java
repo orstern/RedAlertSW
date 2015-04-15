@@ -47,12 +47,12 @@ public class EmergencyContactsActivity  extends Activity {
         startActivityForResult(pickContactIntent, PICK_CONTACT);
     }
 
-    public void SendSMSToContacts(String strMessage) {
+    public static void SendSMSToContacts(String strMessage) {
 
         SmsManager smsManager = SmsManager.getDefault();
 
         // Looping through phone numbers and sending SMS
-        for (String strCurrPhoneNumber : this.userEmergencyContactsNumbers) {
+        for (String strCurrPhoneNumber : userEmergencyContactsNumbers) {
             smsManager.sendTextMessage(strCurrPhoneNumber, null, strMessage, null, null);
         }
     }

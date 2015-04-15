@@ -50,6 +50,7 @@ public class RedAlertActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        EmergencyContactsActivity.SendSMSToContacts("Kemdler gay");
         setContentView(R.layout.activity_red_alert);
 
         final View controlsView = findViewById(R.id.fullscreen_content_controls);
