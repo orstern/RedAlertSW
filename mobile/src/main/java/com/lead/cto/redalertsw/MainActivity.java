@@ -1,8 +1,13 @@
 package com.lead.cto.redalertsw;
 
+import android.app.Activity;
+import android.app.ActivityGroup;
 import android.app.AlertDialog;
+import android.app.LocalActivityManager;
+import android.app.TabActivity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -15,9 +20,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TabHost;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -45,7 +52,7 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
-public class MainActivity extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks {
+public class MainActivity extends ActivityGroup implements GoogleApiClient.ConnectionCallbacks {
     public static final String TAG = "MainActivityMobile";
 
     public static final String EXTRA_MESSAGE = "message";
@@ -71,9 +78,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
 
     String regid;
 
-    String[] cities;
 
-    public static ArrayList<String> userCities = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -111,21 +116,49 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
         //MultiSelectionSpinner spinner = (MultiSelectionSpinner) findViewById(R.id.cities_spinner);
         //spinner.setItems(getResources().getStringArray(R.array.cities_array));
 
-        // Filling auto complete text field with cities
-        // Get a reference to the AutoCompleteTextView in the layout
-        AutoCompleteTextView textView = (AutoCompleteTextView) findViewById(R.id.txtCities);
-        // Get the string array
-        cities = getResources().getStringArray(R.array.cities_array);
-        // Create the adapter and set it to the AutoCompleteTextView
-        ArrayAdapter<String> txtCitiesAdapter =
-                new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, cities);
-        textView.setAdapter(txtCitiesAdapter);
+        // Setting tabs
+        TabHost tabHost = (TabHost)findViewById(R.id.tabHost);
 
-        ListView listView = (ListView) findViewById(R.id.lstCities);
-        ArrayAdapter<String> grdCitiesAdapter = new ArrayAdapter<String>(
-                this, android.R.layout.simple_list_item_1, userCities);
+        tabHost.setup(this.getLocalActivityManager());
 
-        listView.setAdapter(grdCitiesAdapter);
+        TabHost.TabSpec tabSpec = tabHost.newTabSpec("CitiesTab");
+        tabSpec.setContent(new Intent().setClass(this, CitiesActivity.class));
+        tabSpec.setIndicator(getResources().getString(R.string.CitiesTab));
+        tabHost.addTab(tabSpec);
+
+        tabSpec = tabHost.newTabSpec("EmergencyContactsTab");
+        tabSpec.setContent(new Intent().setClass(this, EmergencyContactsActivity.class));
+        tabSpec.setIndicator(getResources().getString(R.string.EmergencyContactTab));
+        tabHost.addTab(tabSpec);
+
+        findViewById(R.id.btnAddContacts).setVisibility(View.GONE);
+        findViewById(R.id.lstContacts).setVisibility(View.GONE);
+
+        tabHost.setOnTabChangedListener(new TabHost.OnTabChangeListener() {
+
+            @Override
+            public void onTabChanged(String tabId) {
+
+                if("CitiesTab".equals(tabId)){
+
+                    findViewById(R.id.btnAddContacts).setVisibility(View.GONE);
+                    findViewById(R.id.lstContacts).setVisibility(View.GONE);
+                    findViewById(R.id.btnAddCity).setVisibility(View.VISIBLE);
+                    findViewById(R.id.lstCities).setVisibility(View.VISIBLE);
+                    findViewById(R.id.txtCities).setVisibility(View.VISIBLE);
+                    findViewById(R.id.lblCurrCity).setVisibility(View.VISIBLE);
+
+                }else if("EmergencyContactsTab".equals(tabId)){
+
+                    findViewById(R.id.btnAddContacts).setVisibility(View.VISIBLE);
+                    findViewById(R.id.lstContacts).setVisibility(View.VISIBLE);
+                    findViewById(R.id.btnAddCity).setVisibility(View.GONE);
+                    findViewById(R.id.lstCities).setVisibility(View.GONE);
+                    findViewById(R.id.txtCities).setVisibility(View.GONE);
+                    findViewById(R.id.lblCurrCity).setVisibility(View.GONE);
+                }
+            }
+        });
     }
 
     // You need to do the Play Services APK check here too.
@@ -133,65 +166,6 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     protected void onResume() {
         super.onResume();
         checkPlayServices();
-    }
-
-    public void btnAddCityOnClick(View v) {
-
-        // Get the city the user inputted
-        String strCity = ((AutoCompleteTextView) findViewById(R.id.txtCities)).getText().toString();
-
-        // Removing whitespace
-        strCity = strCity.replaceAll("\\s+$", "");
-
-        boolean bWasFound = false;
-
-        // Check if city exists
-        for (String strCurrCity : cities) {
-            if (strCity.equals(strCurrCity)) {
-                bWasFound = true;
-            }
-        }
-
-        // If city doesn't exist we show an error message, else add it to GridView
-        if (bWasFound) {
-
-            // Adding city to grid
-            if (!userCities.contains(strCity)) {
-                userCities.add(strCity);
-
-                ListView listView = (ListView) findViewById(R.id.lstCities);
-
-                ArrayAdapter<String> grdCitiesAdapter = new ArrayAdapter<String>(
-                        this, android.R.layout.simple_list_item_1, userCities);
-
-                listView.setAdapter(grdCitiesAdapter);
-            }
-            else {
-                new AlertDialog.Builder(MainActivity.this)
-                        .setTitle(getResources().getString(R.string.city_already_added_title))
-                        .setMessage(getResources().getString(R.string.city_already_added_message))
-                        .setCancelable(false)
-                        .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                // whatever...
-                            }
-                        }).create().show();
-            }
-        }
-        else {
-            new AlertDialog.Builder(MainActivity.this)
-                    .setTitle(getResources().getString(R.string.city_not_exist_title))
-                    .setMessage(getResources().getString(R.string.city_not_exist_message))
-                    .setCancelable(false)
-                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // whatever...
-                        }
-                    }).create().show();
-        }
-
     }
 
     /**

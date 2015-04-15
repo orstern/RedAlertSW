@@ -131,7 +131,7 @@ public class GcmIntentService extends IntentService {
 
     private String getRelevantCities(String strAlertInCities) {
         String strRelevantCities = "";
-        for(String city: MainActivity.userCities) {
+        for(String city: CitiesActivity.userCities) {
             if (strAlertInCities.contains(city)) {
                 strRelevantCities += city + ", ";
             }

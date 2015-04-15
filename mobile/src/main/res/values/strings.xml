@@ -2,11 +2,20 @@
     <string name="app_name">
         צבע אדום
     </string>
+    <string name="EmergencyContactTab">
+        אנשי קשר בחירום
+    </string>
+    <string name="CitiesTab">
+        ערים להתראה
+    </string>
     <string name="lblEmergencyContact">
         מספר איש קשר חירום
     </string>
+    <string name="EmergencyContactsAddButton">
+        הוסף אנשי קשר למקרה חירום
+    </string>
     <string name="lblCurrCity">
-        עיר נוכחית
+ערים להתראה
     </string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>

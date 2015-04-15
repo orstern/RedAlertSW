@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/lblCurrCity"
+        android:id="@+id/lblCurrCity"
+        android:textDirection="rtl"
+        android:singleLine="false"
+        android:layout_alignTop="@+id/txtCities"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add_city_button"
+        android:id="@+id/btnAddCity"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:onClick="btnAddCityOnClick" />
+
+    <AutoCompleteTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/txtCities"
+        android:textDirection="rtl"
+        android:layout_alignBottom="@+id/btnAddCity"
+        android:layout_toLeftOf="@+id/lblCurrCity"
+        android:layout_toRightOf="@+id/btnAddCity"
+        android:layout_toEndOf="@+id/btnAddCity" />
+
+    <ListView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/lstCities"
+        android:layout_alignRight="@+id/lblCurrCity"
+        android:layout_alignEnd="@+id/lblCurrCity"
+        android:layout_below="@+id/btnAddCity" />
+
+</RelativeLayout>
