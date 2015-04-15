@@ -10,19 +10,43 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
 public class MainActivity extends ActionBarActivity {
+    public static final String TAG = "MainActivityMobile";
+
+    public static final String EXTRA_MESSAGE = "message";
+    public static final String PROPERTY_REG_ID = "registration_id";
+    private static final String PROPERTY_APP_VERSION = "appVersion";
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
-    private static final String TAG = "MainActivityMobile";
+
+    /**
+     * Substitute you own sender ID here. This is the project number you got
+     * from the API Console, as described in "Getting Started."
+     */
+    String SENDER_ID = "548355374500";
 
     TextView mDisplay;
     GoogleCloudMessaging gcm;
@@ -50,11 +74,22 @@ public class MainActivity extends ActionBarActivity {
             if (regid.isEmpty()) {
                 registerInBackground();
             }
+
+
         } else {
             Log.i(TAG, "No valid Google Play Services APK found.");
         }
 
+        // Filling Spinner (Combo Box) with cities
+        //Spinner spinner = (Spinner) findViewById(R.id.cities_spinner);
+        //ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+        //        this, R.array.cities_array, android.R.layout.simple_spinner_item);
+       // adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+       // spinner.setAdapter(adapter);
 
+        // Filling Spinnner (Combo Box) with cities
+        MultiSelectionSpinner spinner = (MultiSelectionSpinner) findViewById(R.id.cities_spinner);
+        spinner.setItems(getResources().getStringArray(R.array.cities_array));
     }
 
     // You need to do the Play Services APK check here too.
@@ -144,8 +179,9 @@ public class MainActivity extends ActionBarActivity {
      */
     private void registerInBackground() {
         new AsyncTask() {
+
             @Override
-            protected String doInBackground(Void... params) {
+            protected Object doInBackground(Object[] params) {
                 String msg = "";
                 try {
                     if (gcm == null) {
@@ -175,12 +211,12 @@ public class MainActivity extends ActionBarActivity {
                 return msg;
             }
 
-            @Override
-            protected void onPostExecute(String msg) {
-                mDisplay.append(msg + "\n");
-            }
-        }.execute(null, null, null);
+//            @Override
+//            protected void onPostExecute(Object msg) {
+//                mDisplay.append(msg.toString() + "\n");
+//            }
 
+        }.execute(null, null, null);
     }
 
     /**
@@ -190,7 +226,23 @@ public class MainActivity extends ActionBarActivity {
      * using the 'from' address in the message.
      */
     private void sendRegistrationIdToBackend() {
-        // Your implementation here.
+        HttpClient httpclient = new DefaultHttpClient();
+        HttpPost httppost = new HttpPost("192.168.20.176:9000");
+
+        try {
+            // Add your data
+            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
+            nameValuePairs.add(new BasicNameValuePair("regId", regid));
+            httppost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+
+            // Execute HTTP Post Request
+            HttpResponse response = httpclient.execute(httppost);
+
+        } catch (ClientProtocolException e) {
+            // TODO Auto-generated catch block
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+        }
     }
 
     /**
@@ -207,6 +259,6 @@ public class MainActivity extends ActionBarActivity {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(PROPERTY_REG_ID, regId);
         editor.putInt(PROPERTY_APP_VERSION, appVersion);
-        editor.commit();
+        editor.apply();
     }
 }
