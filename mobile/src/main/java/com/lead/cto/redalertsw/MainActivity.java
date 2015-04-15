@@ -16,7 +16,12 @@ import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.wearable.MessageApi;
+import com.google.android.gms.wearable.Node;
+import com.google.android.gms.wearable.NodeApi;
+import com.google.android.gms.wearable.Wearable;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -34,13 +39,17 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks {
     public static final String TAG = "MainActivityMobile";
 
     public static final String EXTRA_MESSAGE = "message";
     public static final String PROPERTY_REG_ID = "registration_id";
     private static final String PROPERTY_APP_VERSION = "appVersion";
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+
+
+    private GoogleApiClient mApiClient;
+    private static final String START_ACTIVITY = "/start_activity";
 
     /**
      * Substitute you own sender ID here. This is the project number you got
@@ -64,6 +73,8 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
 
         Context context = getApplicationContext();
+
+        initGoogleApiClient();
 
         // Check device for Play Services APK. If check succeeds, proceed with
         //  GCM registration.
@@ -90,6 +101,8 @@ public class MainActivity extends ActionBarActivity {
         // Filling Spinnner (Combo Box) with cities
         MultiSelectionSpinner spinner = (MultiSelectionSpinner) findViewById(R.id.cities_spinner);
         spinner.setItems(getResources().getStringArray(R.array.cities_array));
+
+
     }
 
     // You need to do the Play Services APK check here too.
@@ -260,5 +273,56 @@ public class MainActivity extends ActionBarActivity {
         editor.putString(PROPERTY_REG_ID, regId);
         editor.putInt(PROPERTY_APP_VERSION, appVersion);
         editor.apply();
+    }
+
+
+    /*******************************************************************************************/
+
+    private void initGoogleApiClient() {
+        mApiClient = new GoogleApiClient.Builder( this )
+                .addApi( Wearable.API )
+                .build();
+
+        mApiClient.connect();
+    }
+
+    @Override
+    public void onConnected(Bundle bundle) {
+        sendMessage( START_ACTIVITY, "" );
+    }
+
+    private void sendMessage( final String path, final String text ) {
+        new Thread( new Runnable() {
+            @Override
+            public void run() {
+                NodeApi.GetConnectedNodesResult nodes = Wearable.NodeApi.getConnectedNodes( mApiClient ).await();
+                for(Node node : nodes.getNodes()) {
+                    MessageApi.SendMessageResult result = Wearable.MessageApi.sendMessage(
+                            mApiClient, node.getId(), path, text.getBytes() ).await();
+                }
+
+                runOnUiThread( new Runnable() {
+                    @Override
+                    public void run() {
+
+                        //mEditText.setText( "" );
+                    }
+                });
+            }
+        }).start();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mApiClient.disconnect();
+    }
+
+
+
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
     }
 }
