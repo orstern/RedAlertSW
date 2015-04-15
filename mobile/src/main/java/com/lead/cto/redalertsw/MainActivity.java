@@ -54,7 +54,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
 
-    private GoogleApiClient mApiClient;
+    public static GoogleApiClient mApiClient;
     private static final String START_ACTIVITY = "/start_activity";
 
     /**

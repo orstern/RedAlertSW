@@ -11,10 +11,14 @@ import android.media.RingtoneManager;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.SystemClock;
+import android.provider.SyncStateContract;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.wearable.PutDataMapRequest;
+import com.google.android.gms.wearable.PutDataRequest;
+import com.google.android.gms.wearable.Wearable;
 
 public class GcmIntentService extends IntentService {
     public static final int NOTIFICATION_ID = 1;
@@ -22,6 +26,12 @@ public class GcmIntentService extends IntentService {
     NotificationCompat.Builder builder;
 
     private static final String redAlertHebrew = "צבע אדום";
+
+    // Data layer constants (todo: MOVE THIS ARABIC LOOKING CODE INTO A CONSTANTS FILE)
+    private static final String ALERT_MODE_PATH = "/alert_mode";
+    private static final String ALERT_MODE_KEY = "alert.mode.key";
+    private boolean ALERT_MODE = false;
+
 
     public GcmIntentService() {
         super("GcmIntentService");
@@ -58,7 +68,17 @@ public class GcmIntentService extends IntentService {
                 // Post notification of received message.
                 String strAlertInCities = parseMessage(extras.getString("cities"));
                 String strRelevantCities = getRelevantCities(strAlertInCities);
-                if (strRelevantCities.length() > 0) {
+                if (strRelevantCities.length() > 0 && !ALERT_MODE) {
+                    ALERT_MODE = true;
+
+
+                    // Set the data item
+                    PutDataMapRequest dataMapRequest = PutDataMapRequest.create(ALERT_MODE_PATH);
+                    dataMapRequest.getDataMap().putBoolean(ALERT_MODE_KEY,ALERT_MODE);
+                    PutDataRequest putDataRequest = dataMapRequest.asPutDataRequest();
+                    Wearable.DataApi.putDataItem(MainActivity.mApiClient, putDataRequest);
+
+                    // Send notification
                     sendNotification(redAlertHebrew + ": " + strRelevantCities);
                 }
 
