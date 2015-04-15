@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Listens to DataItems and Messages from the local node.
  */
-public class DataLayerListenerService extends WearableListenerService {
+public class WearMessageListenerService extends WearableListenerService {
 
     private static final String START_ACTIVITY_PATH = "/start-activity";
     private static final String DATA_ITEM_RECEIVED_PATH = "/data-item-received";

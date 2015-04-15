@@ -110,7 +110,7 @@ public class GcmIntentService extends IntentService {//implements GoogleApiClien
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.common_signin_btn_icon_dark)
+                        .setSmallIcon(R.drawable.logo)
                         .setContentTitle(redAlertHebrew)
                         .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
                         .setContentText(msg)
@@ -122,9 +122,8 @@ public class GcmIntentService extends IntentService {//implements GoogleApiClien
                         .setGroup("RedAlertActivity")
                         .setPriority(NotificationCompat.PRIORITY_MAX)
                         .setTicker(redAlertHebrew + ": " + msg)
-                        .setSubText("גש למרחב המוגן")
                         .setFullScreenIntent(pi, true)
-                        .addAction(R.drawable.ic_plusone_standard_off_client, getString(R.string.get_help), pi);
+                        .addAction(R.drawable.sirenbackground, getString(R.string.get_help), pi);
 
 
         mNotificationManager.notify(NOTIFICATION_ID++, mBuilder.build());
