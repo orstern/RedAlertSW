@@ -1,0 +1,81 @@
+2015-04-15 11:32:11,343 - [INFO] - from play in pool-4-thread-5 
+Listening for HTTP on /0:0:0:0:0:0:0:0:9000
+
+2015-04-15 11:32:25,639 - [INFO] - from application in play-internal-execution-context-1 
+Application has started
+
+2015-04-15 11:32:28,780 - [INFO] - from play in play-internal-execution-context-1 
+Application started (Dev)
+
+2015-04-15 11:32:40,764 - [INFO] - from application in play-akka.actor.default-dispatcher-2 
+Sending test notification..
+
+2015-04-15 11:32:40,909 - [INFO] - from application in play-akka.actor.default-dispatcher-2 
+Sending notification..
+
+2015-04-15 11:32:41,883 - [INFO] - from application in play-akka.actor.default-dispatcher-2 
+ok
+
+2015-04-15 11:32:41,886 - [INFO] - from application in play-akka.actor.default-dispatcher-2 
+{"multicast_id":6743937146897970541,"success":1,"failure":0,"canonical_ids":0,"results":[{"message_id":"0:1429086764835268%4dccb1c4f9fd7ecd"}]}
+
+2015-04-15 11:44:34,742 - [INFO] - from application in play-akka.actor.default-dispatcher-5 
+Sending test notification..
+
+2015-04-15 11:44:34,786 - [INFO] - from application in play-akka.actor.default-dispatcher-5 
+Sending notification..
+
+2015-04-15 11:44:35,400 - [INFO] - from application in play-akka.actor.default-dispatcher-5 
+ok
+
+2015-04-15 11:44:35,401 - [INFO] - from application in play-akka.actor.default-dispatcher-5 
+{"multicast_id":8051639778889704470,"success":1,"failure":0,"canonical_ids":0,"results":[{"message_id":"0:1429087478362538%4dccb1c4f9fd7ecd"}]}
+
+2015-04-15 11:44:58,421 - [INFO] - from application in play-akka.actor.default-dispatcher-10 
+Sending test notification..
+
+2015-04-15 11:44:58,464 - [INFO] - from application in play-akka.actor.default-dispatcher-10 
+Sending notification..
+
+2015-04-15 11:44:58,590 - [INFO] - from application in play-akka.actor.default-dispatcher-10 
+ok
+
+2015-04-15 11:44:58,591 - [INFO] - from application in play-akka.actor.default-dispatcher-10 
+{"multicast_id":5731071819324787881,"success":1,"failure":0,"canonical_ids":0,"results":[{"message_id":"0:1429087501545589%4dccb1c4f9fd7ecd"}]}
+
+2015-04-15 11:45:25,593 - [INFO] - from application in play-akka.actor.default-dispatcher-11 
+Sending test notification..
+
+2015-04-15 11:45:25,699 - [INFO] - from application in play-akka.actor.default-dispatcher-11 
+Sending notification..
+
+2015-04-15 11:45:25,801 - [INFO] - from application in play-akka.actor.default-dispatcher-11 
+ok
+
+2015-04-15 11:45:25,802 - [INFO] - from application in play-akka.actor.default-dispatcher-11 
+{"multicast_id":7506160819468532322,"success":1,"failure":0,"canonical_ids":0,"results":[{"message_id":"0:1429087528777572%4dccb1c4f9fd7ecd"}]}
+
+2015-04-15 11:47:35,258 - [INFO] - from application in play-akka.actor.default-dispatcher-12 
+Sending test notification..
+
+2015-04-15 11:47:35,365 - [INFO] - from application in play-akka.actor.default-dispatcher-12 
+Sending notification..
+
+2015-04-15 11:47:35,934 - [INFO] - from application in play-akka.actor.default-dispatcher-12 
+ok
+
+2015-04-15 11:47:35,934 - [INFO] - from application in play-akka.actor.default-dispatcher-12 
+{"multicast_id":5498418278470828299,"success":1,"failure":0,"canonical_ids":0,"results":[{"message_id":"0:1429087658914387%4dccb1c4f9fd7ecd"}]}
+
+2015-04-15 11:55:58,906 - [INFO] - from application in play-akka.actor.default-dispatcher-13 
+Sending test notification..
+
+2015-04-15 11:55:58,935 - [INFO] - from application in play-akka.actor.default-dispatcher-13 
+Sending notification..
+
+2015-04-15 11:55:59,680 - [INFO] - from application in play-akka.actor.default-dispatcher-13 
+ok
+
+2015-04-15 11:55:59,681 - [INFO] - from application in play-akka.actor.default-dispatcher-13 
+{"multicast_id":8301493892981390076,"success":1,"failure":0,"canonical_ids":0,"results":[{"message_id":"0:1429088162625477%4dccb1c4f9fd7ecd"}]}
+
