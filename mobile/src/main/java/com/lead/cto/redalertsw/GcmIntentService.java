@@ -1,11 +1,15 @@
 package com.lead.cto.redalertsw;
 
 import android.app.IntentService;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.Context;
+import android.graphics.Color;
+import android.media.RingtoneManager;
 import android.os.Bundle;
+import android.os.PowerManager;
 import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -16,6 +20,8 @@ public class GcmIntentService extends IntentService {
     public static final int NOTIFICATION_ID = 1;
     private NotificationManager mNotificationManager;
     NotificationCompat.Builder builder;
+
+    private static final String redAlertHebrew = "צבע אדום";
 
     public GcmIntentService() {
         super("GcmIntentService");
@@ -50,7 +56,9 @@ public class GcmIntentService extends IntentService {
                 //TODO: Add function that check the location and start alarm if necessary
 
                 // Post notification of received message.
-                sendNotification("Received: " + extras.toString());
+                String strCities = parseMessage(extras.getString("cities"));
+
+                sendNotification(redAlertHebrew + ": " + strCities);
             }
         }
         // Release the wake lock provided by the WakefulBroadcastReceiver.
@@ -70,12 +78,40 @@ public class GcmIntentService extends IntentService {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.common_signin_btn_icon_dark)
-                        .setContentTitle("GCM Notification")
+                        .setContentTitle(redAlertHebrew)
                         .setStyle(new NotificationCompat.BigTextStyle()
                                 .bigText(msg))
-                        .setContentText(msg);
+                        .setContentText(msg)
+                .setVibrate(new long[] {1000, 1000})
+                .setLights(Color.RED, 1000, 1000)
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .setPriority(NotificationCompat.PRIORITY_MAX);
+
+        wakeScreen();
+
 
         mBuilder.setContentIntent(contentIntent);
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+    }
+
+    private String parseMessage(String strCities) {
+        String strSubstringCities = strCities.substring(1, strCities.length() -1);
+        String[] arrCities = strSubstringCities.split(",");
+        String parsedMessage = "";
+        for (int i = 0; i < arrCities.length; i++) {
+            parsedMessage += arrCities[i].substring(1, arrCities[i].length()-1);
+
+            // Add ", " to all the cities except the last one
+            if (i != arrCities.length -1) {
+                parsedMessage += ", ";
+            }
+        }
+
+        return parsedMessage;
+    }
+
+    private void wakeScreen() {
+        PowerManager.WakeLock screenOn = ((PowerManager)getSystemService(POWER_SERVICE)).newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP, "RedAlert");
+        screenOn.acquire(10000);
     }
 }
