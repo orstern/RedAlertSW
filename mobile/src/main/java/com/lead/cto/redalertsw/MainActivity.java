@@ -73,7 +73,7 @@ public class MainActivity extends ActionBarActivity implements GoogleApiClient.C
 
     String[] cities;
 
-    ArrayList<String> userCities = new ArrayList<>();
+    public static ArrayList<String> userCities = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
