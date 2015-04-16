@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string-array name="cities_array">
+    <string-array name="all_cities_array">
         <item>א דהאבשה</item>
         <item>א דיראת</item>
         <item>א דנפירי</item>

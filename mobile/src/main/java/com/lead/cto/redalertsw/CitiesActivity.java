@@ -2,7 +2,9 @@ package com.lead.cto.redalertsw;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -10,6 +12,8 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by ofir on 4/15/2015.
@@ -29,13 +33,21 @@ public class CitiesActivity extends Activity {
 
         // Filling auto complete text field with cities
         // Get a reference to the AutoCompleteTextView in the layout
-        AutoCompleteTextView textView = (AutoCompleteTextView) findViewById(R.id.txtCities);
+        AutoCompleteTextView textView = (AutoCompleteTextView) findViewById(R.id.txtSelectedCity);
+
         // Get the string array
-        cities = getResources().getStringArray(R.array.cities_array);
+        cities = getResources().getStringArray(R.array.all_cities_array);
+
         // Create the adapter and set it to the AutoCompleteTextView
         ArrayAdapter<String> txtCitiesAdapter =
                 new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, cities);
         textView.setAdapter(txtCitiesAdapter);
+
+        // Loading user cities
+        //Set<String> stringSet = new HashSet<String>();
+        //SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        //sharedPref.getStringSet("SaveUserCitiesArray", stringSet);
+        //userCities.addAll(stringSet);
 
         ListView listView = (ListView) findViewById(R.id.lstCities);
         ArrayAdapter<String> lstCitiesAdapter = new ArrayAdapter<String>(
@@ -47,7 +59,7 @@ public class CitiesActivity extends Activity {
     public void btnAddCityOnClick(View v) {
 
         // Get the city the user inputted
-        String strCity = ((AutoCompleteTextView) findViewById(R.id.txtCities)).getText().toString();
+        String strCity = ((AutoCompleteTextView) findViewById(R.id.txtSelectedCity)).getText().toString();
 
         // Removing whitespace
         strCity = strCity.replaceAll("\\s+$", "");
@@ -75,7 +87,13 @@ public class CitiesActivity extends Activity {
 
                 listView.setAdapter(grdCitiesAdapter);
 
-                ((AutoCompleteTextView) findViewById(R.id.txtCities)).setText("");
+                ((AutoCompleteTextView) findViewById(R.id.txtSelectedCity)).setText("");
+
+                // Add city to preferences
+                //SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+                //SharedPreferences.Editor editor = sharedPref.edit();
+                //editor.putStringSet("SaveUserCitiesArray", new HashSet<>(userCities));
+                //editor.commit();
             }
             else {
                 new AlertDialog.Builder(CitiesActivity.this)
