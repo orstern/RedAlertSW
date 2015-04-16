@@ -79,12 +79,6 @@ public class GcmIntentService extends IntentService {//implements GoogleApiClien
                 String strRelevantCities = getRelevantCities(strAlertInCities);
                 //if (strRelevantCities.length() > 0) {
                     sendNotification(strRelevantCities);
-
-//                    Intent newIntent = new Intent(this, RedAlertActivity.class);
-//                    newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                    startActivity(newIntent);
-//
-//                    new StartWearableActivityTask().execute();
                 //}
 
             }
@@ -102,22 +96,42 @@ public class GcmIntentService extends IntentService {//implements GoogleApiClien
         mNotificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        Intent push = new Intent();
-        push.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
-        push.setClass( this, RedAlertActivity.class );
-        PendingIntent pi = PendingIntent.getActivity( this, 0, push, PendingIntent.FLAG_UPDATE_CURRENT );
+        // Create Pending intent that start SMS send
+        Intent intentSendSms = new Intent();
+        intentSendSms.setClass(this, ActionHandlerService.class);
+        intentSendSms.setAction(ActionHandlerService.SEND_SMS);
+        PendingIntent piSendSms = PendingIntent.getService(this, 0, intentSendSms, PendingIntent.FLAG_ONE_SHOT);
 
+        // Create Pending intent that start reporting missile fall
+        Intent intentReportMissileFall = new Intent();
+        intentReportMissileFall.setClass(this, ActionHandlerService.class);
+        intentReportMissileFall.setAction(ActionHandlerService.REPORT_MISSILE_FALL);
+        PendingIntent piReportMissileFall = PendingIntent.getService(this, 0, intentReportMissileFall, PendingIntent.FLAG_ONE_SHOT);
+
+        // Create Pending intent that start reporting missile fall
+        Intent intentNavigateToSafePlace = new Intent();
+        intentNavigateToSafePlace.setClass(this, ActionHandlerService.class);
+        intentNavigateToSafePlace.setAction(ActionHandlerService.NAVIGATE_TO_SAFE_PLACE);
+        PendingIntent piNavigateToSafePlace = PendingIntent.getService(this, 0, intentNavigateToSafePlace, PendingIntent.FLAG_ONE_SHOT);
+
+
+
+
+        // Create background to the actions in the smartwatch
         Bitmap background = BitmapFactory.decodeResource(getResources(),
                 R.drawable.sirenbackground);
 
         List<NotificationCompat.Action> actions = new ArrayList<NotificationCompat.Action>();
-        actions.add(new NotificationCompat.Action(R.drawable.sosicon, getString(R.string.get_help), pi));
-        actions.add(new NotificationCompat.Action(R.drawable.missile, getString(R.string.report_missile_fall), pi));
+        actions.add(new NotificationCompat.Action(R.drawable.navigate, getString(R.string.navigate_to_safe_place), piNavigateToSafePlace));
+        actions.add(new NotificationCompat.Action(R.drawable.sosicon, getString(R.string.get_help), piSendSms));
+        actions.add(new NotificationCompat.Action(R.drawable.missile, getString(R.string.report_missile_fall), piReportMissileFall));
+
 
         NotificationCompat.WearableExtender wearableExtender =
                 new NotificationCompat.WearableExtender()
                         .setBackground(background)
                         .addActions(actions);
+                        //.addActions(actions);
 
 
         NotificationCompat.Builder mBuilder =
@@ -126,14 +140,15 @@ public class GcmIntentService extends IntentService {//implements GoogleApiClien
                         .setContentTitle(redAlertHebrew)
                         .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
                         .setContentText(msg)
-                        .setVibrate(new long[] {1000, 1000})
+                        .setVibrate(new long[]{1000, 1000})
                         .setLights(Color.RED, 3000, 3000)
                         .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                         .setAutoCancel(true)
                         .setGroup("RedAlertActivity")
                         .setPriority(NotificationCompat.PRIORITY_MAX)
                         .setTicker(redAlertHebrew + ": " + msg)
-                        .setFullScreenIntent(pi, true)
+                        .addAction(actions.get(0))
+                        .addAction(actions.get(1))
                         .extend(wearableExtender);
 
 

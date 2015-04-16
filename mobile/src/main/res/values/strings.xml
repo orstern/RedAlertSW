@@ -48,7 +48,9 @@
     <string name="report_missile_fall">
         דווח על נפילה
     </string>
-
+<string name="navigate_to_safe_place">
+נווט למרחב מוגן
+    </string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
 
 </resources>
