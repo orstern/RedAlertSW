@@ -6,43 +6,132 @@
     android:paddingBottom="@dimen/activity_vertical_margin" tools:context=".MainActivity"
     android:textDirection="rtl">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/lblCurrCity"
-        android:id="@+id/lblCurrCity"
-        android:textDirection="rtl"
-        android:layout_alignParentTop="true"
+    <TabHost
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/tabHost"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:singleLine="false" />
+        android:layout_alignParentEnd="true">
 
-    <AutoCompleteTextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/txtCities"
-        android:layout_alignTop="@+id/lblCurrCity"
-        android:layout_toLeftOf="@+id/lblCurrCity"
-        android:layout_toRightOf="@+id/btnAddCity"
-        android:layout_toEndOf="@+id/btnAddCity" />
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:orientation="vertical">
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/add_city_button"
-        android:id="@+id/btnAddCity"
-        android:layout_alignTop="@+id/txtCities"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:onClick="btnAddCityOnClick" />
+            <TabWidget
+                android:id="@android:id/tabs"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:touchscreenBlocksFocus="false"
+                android:transitionGroup="false"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:nestedScrollingEnabled="false"></TabWidget>
 
-    <ListView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/lstCities"
-        android:layout_below="@+id/btnAddCity"
-        android:layout_centerVertical="true"
-        android:layout_alignRight="@+id/lblCurrCity"
-        android:layout_alignEnd="@+id/lblCurrCity" />
+
+            <FrameLayout
+                android:id="@android:id/tabcontent"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent">
+
+                <include
+                    android:id="@+id/cities_tab"
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    layout="@layout/cities_layout" >
+                </include>
+
+                <include
+                    android:id="@+id/emergency_contacts_tab"
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    layout="@layout/emergency_contacts_layout" >
+                </include>
+
+                <!--<LinearLayout
+                    android:id="@+id/EmergencyContactTab"
+                    android:layout_width="match_parent"
+                    android:layout_height="fill_parent"
+                    android:orientation="vertical"
+                    an>
+
+                    <RelativeLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent">
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/button"
+                        android:text="@string/EmergencyContactsAddButton"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true" />
+
+                    </RelativeLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/CitiesTab"
+                    android:layout_width="wrap_content"
+                    android:layout_height="fill_parent"
+                    android:orientation="vertical"
+                    android:layout_gravity="center">
+
+                    <RelativeLayout
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/lblCurrCity"
+                        android:id="@+id/lblCurrCity"
+                        android:textDirection="rtl"
+                        android:singleLine="false"
+                        android:layout_alignTop="@+id/txtCities"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignBottom="@+id/txtCities"
+                        android:layout_toRightOf="@+id/txtCities"
+                        android:layout_toEndOf="@+id/txtCities" />
+
+                    <Button
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/add_city_button"
+                        android:id="@+id/btnAddCity"
+                        android:onClick="btnAddCityOnClick"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true" />
+
+                    <AutoCompleteTextView
+                        android:layout_width="198dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/txtCities"
+                        android:textDirection="rtl"
+                        android:layout_alignBottom="@+id/btnAddCity"
+                        android:layout_toRightOf="@+id/btnAddCity"
+                        android:layout_toEndOf="@+id/btnAddCity" />
+
+                    <ListView
+                        android:layout_width="wrap_content"
+                        android:layout_height="377dp"
+                        android:id="@+id/lstCities"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_below="@+id/lblCurrCity" />
+
+                    </RelativeLayout>
+                </LinearLayout>-->
+
+            </FrameLayout>
+        </LinearLayout>
+    </TabHost>
 
 </RelativeLayout>

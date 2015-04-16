@@ -2,11 +2,20 @@
     <string name="app_name">
         צבע אדום
     </string>
+    <string name="EmergencyContactTab">
+        אנשי קשר בחירום
+    </string>
+    <string name="CitiesTab">
+        ערים להתראה
+    </string>
     <string name="lblEmergencyContact">
         מספר איש קשר חירום
     </string>
+    <string name="EmergencyContactsAddButton">
+        הוסף אנשי קשר למקרה חירום
+    </string>
     <string name="lblCurrCity">
-        עיר נוכחית
+ערים להתראה
     </string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
@@ -34,9 +43,21 @@
         צבע אדום
     </string>
     <string name="get_help">
-        הזעק עזרה
+לחצן מצוקה
     </string>
-
+    <string name="report_missile_fall">
+        דווח על נפילה
+    </string>
+<string name="navigate_to_safe_place">
+נווט למרחב מוגן
+    </string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
-
+    <string name="title_activity_google_maps">Map</string>
+<string name="google_maps_key"></string>
+    <string name="sms_message_eng" >
+This is an automatic message. The contact just pressed on sos button in RedAlertSW application. Click here to see his location:
+    </string>
+     <string name="sms_message_heb" >
+        זוהי הודעה אוטומטית. איש הקשר לחץ על לחצן מצוקה באפליקציית צבע אדום. לחץ כאן כדי לראות את מיקומו:
+    </string>
 </resources>

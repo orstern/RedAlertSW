@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.media.RingtoneManager;
 import android.os.AsyncTask;
@@ -24,8 +25,10 @@ import com.google.android.gms.wearable.Node;
 import com.google.android.gms.wearable.NodeApi;
 import com.google.android.gms.wearable.Wearable;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 
 public class GcmIntentService extends IntentService {//implements GoogleApiClient.ConnectionCallbacks, MessageApi.MessageListener, NodeApi.NodeListener, DataApi.DataListener{
     private static final String TAG = "GcmIntentService";
@@ -60,28 +63,20 @@ public class GcmIntentService extends IntentService {//implements GoogleApiClien
              */
             if (GoogleCloudMessaging.
                     MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
-                sendNotification("Send error: " + extras.toString());
+
             } else if (GoogleCloudMessaging.
                     MESSAGE_TYPE_DELETED.equals(messageType)) {
-                sendNotification("Deleted messages on server: " +
-                        extras.toString());
+
                 // If it's a regular GCM message, do some work.
             } else if (GoogleCloudMessaging.
                     MESSAGE_TYPE_MESSAGE.equals(messageType)) {
 
-                //TODO: Add function that check the location and start alarm if necessary
-
                 // Post notification of received message.
                 String strAlertInCities = parseMessage(extras.getString("cities"));
+                String strTitle = extras.getString("title");
                 String strRelevantCities = getRelevantCities(strAlertInCities);
                 //if (strRelevantCities.length() > 0) {
-                    sendNotification(strRelevantCities);
-
-//                    Intent newIntent = new Intent(this, RedAlertActivity.class);
-//                    newIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                    startActivity(newIntent);
-//
-//                    new StartWearableActivityTask().execute();
+                    sendNotification(strRelevantCities, strTitle);
                 //}
 
             }
@@ -95,35 +90,62 @@ public class GcmIntentService extends IntentService {//implements GoogleApiClien
     // Put the message into a notification and post it.
     // This is just one simple example of what you might choose to do with
     // a GCM message.
-    private void sendNotification(String msg) {
+    private void sendNotification(String strMsg, String strTitle) {
         mNotificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
 
-        Intent push = new Intent();
-        push.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
-        push.setClass( this, RedAlertActivity.class );
-        PendingIntent pi = PendingIntent.getActivity( this, 0, push, PendingIntent.FLAG_UPDATE_CURRENT );
+        // Create Pending intent that start SMS send
+        Intent intentSendSms = new Intent();
+        intentSendSms.setClass(this, ActionHandlerService.class);
+        intentSendSms.setAction(ActionHandlerService.SEND_SMS);
+        PendingIntent piSendSms = PendingIntent.getService(this, 0, intentSendSms, PendingIntent.FLAG_ONE_SHOT);
+
+        // Create Pending intent that start reporting missile fall
+        Intent intentReportMissileFall = new Intent();
+        intentReportMissileFall.setClass(this, ActionHandlerService.class);
+        intentReportMissileFall.setAction(ActionHandlerService.REPORT_MISSILE_FALL);
+        PendingIntent piReportMissileFall = PendingIntent.getService(this, 0, intentReportMissileFall, PendingIntent.FLAG_ONE_SHOT);
+
+        // Create Pending intent that start reporting missile fall
+        Intent intentNavigateToSafePlace = new Intent();
+        intentNavigateToSafePlace.setClass(this, ActionHandlerService.class);
+        intentNavigateToSafePlace.setAction(ActionHandlerService.NAVIGATE_TO_SAFE_PLACE);
+        PendingIntent piNavigateToSafePlace = PendingIntent.getService(this, 0, intentNavigateToSafePlace, PendingIntent.FLAG_ONE_SHOT);
 
 
 
+
+        // Create background to the actions in the smartwatch
+        Bitmap background = BitmapFactory.decodeResource(getResources(),
+                R.drawable.sirenbackground);
+
+        List<NotificationCompat.Action> actions = new ArrayList<NotificationCompat.Action>();
+        actions.add(new NotificationCompat.Action(R.drawable.navigate, getString(R.string.navigate_to_safe_place), piNavigateToSafePlace));
+        actions.add(new NotificationCompat.Action(R.drawable.sosicon, getString(R.string.get_help), piSendSms));
+        actions.add(new NotificationCompat.Action(R.drawable.missile, getString(R.string.report_missile_fall), piReportMissileFall));
+
+
+        NotificationCompat.WearableExtender wearableExtender =
+                new NotificationCompat.WearableExtender()
+                        .setBackground(background)
+                        .addActions(actions);
+                        //.addActions(actions);
 
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.logo)
                         .setContentTitle(redAlertHebrew)
-                        .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
-                        .setContentText(msg)
-                        .setContentInfo(msg)
-                        .setVibrate(new long[] {1000, 1000})
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(strTitle + ": " + strMsg))
+                        .setContentText(strTitle + ": " + strMsg)
+                        .setVibrate(new long[]{0, 500, 250, 500, 250, 500, 250, 500 })
                         .setLights(Color.RED, 3000, 3000)
                         .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                         .setAutoCancel(true)
                         .setGroup("RedAlertActivity")
                         .setPriority(NotificationCompat.PRIORITY_MAX)
-                        .setTicker(redAlertHebrew + ": " + msg)
-                        .setFullScreenIntent(pi, true)
-                        .addAction(R.drawable.sirenbackground, getString(R.string.get_help), pi);
+                        .setTicker(redAlertHebrew + " " + strTitle + ": " + strMsg)
+                        .extend(wearableExtender);
 
 
         mNotificationManager.notify(NOTIFICATION_ID++, mBuilder.build());
@@ -153,7 +175,7 @@ public class GcmIntentService extends IntentService {//implements GoogleApiClien
 
     private String getRelevantCities(String strAlertInCities) {
         String strRelevantCities = "";
-        for(String city: MainActivity.userCities) {
+        for(String city: CitiesActivity.userCities) {
             if (strAlertInCities.contains(city)) {
                 strRelevantCities += city + ", ";
             }
@@ -169,38 +191,6 @@ public class GcmIntentService extends IntentService {//implements GoogleApiClien
 
     /*******************************************************************************************/
 
-
-
-//    @Override //ConnectionCallbacks
-//    public void onConnected(Bundle connectionHint) {
-////        mResolvingError = false;
-////        mStartActivityBtn.setEnabled(true);
-////        mSendPhotoBtn.setEnabled(mCameraSupported);
-////        Wearable.DataApi.addListener(mGoogleApiClient, this);
-//        Wearable.MessageApi.addListener(mGoogleApiClient, this);
-//        Wearable.NodeApi.addListener(mGoogleApiClient, this);
-//    }
-//
-//    @Override //NodeListener
-//    public void onPeerConnected(final Node peer) {
-//
-//
-//    }
-//
-//    @Override //MessageListener
-//    public void onMessageReceived(final MessageEvent messageEvent) {
-//
-//    }
-//
-//    @Override //ConnectionCallbacks
-//    public void onConnectionSuspended(int cause) {
-//
-//    }
-//
-//    @Override //NodeListener
-//    public void onPeerDisconnected(final Node peer) {
-//
-//    }
 
     private Collection<String> getNodes() {
         HashSet<String> results = new HashSet<String>();
