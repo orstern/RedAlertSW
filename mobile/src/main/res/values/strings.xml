@@ -43,7 +43,10 @@
         צבע אדום
     </string>
     <string name="get_help">
-        הזעק עזרה
+לחצן מצוקה
+    </string>
+    <string name="report_missile_fall">
+        דווח על נפילה
     </string>
 
     <string name="dummy_content">DUMMY\nCONTENT</string>
