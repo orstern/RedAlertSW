@@ -63,22 +63,20 @@ public class GcmIntentService extends IntentService {//implements GoogleApiClien
              */
             if (GoogleCloudMessaging.
                     MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
-                sendNotification("Send error: " + extras.toString());
+
             } else if (GoogleCloudMessaging.
                     MESSAGE_TYPE_DELETED.equals(messageType)) {
-                sendNotification("Deleted messages on server: " +
-                        extras.toString());
+
                 // If it's a regular GCM message, do some work.
             } else if (GoogleCloudMessaging.
                     MESSAGE_TYPE_MESSAGE.equals(messageType)) {
 
-                //TODO: Add function that check the location and start alarm if necessary
-
                 // Post notification of received message.
                 String strAlertInCities = parseMessage(extras.getString("cities"));
+                String strTitle = extras.getString("title");
                 String strRelevantCities = getRelevantCities(strAlertInCities);
                 //if (strRelevantCities.length() > 0) {
-                    sendNotification(strRelevantCities);
+                    sendNotification(strRelevantCities, strTitle);
                 //}
 
             }
@@ -92,7 +90,7 @@ public class GcmIntentService extends IntentService {//implements GoogleApiClien
     // Put the message into a notification and post it.
     // This is just one simple example of what you might choose to do with
     // a GCM message.
-    private void sendNotification(String msg) {
+    private void sendNotification(String strMsg, String strTitle) {
         mNotificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
 
@@ -138,17 +136,15 @@ public class GcmIntentService extends IntentService {//implements GoogleApiClien
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.logo)
                         .setContentTitle(redAlertHebrew)
-                        .setStyle(new NotificationCompat.BigTextStyle().bigText(msg))
-                        .setContentText(msg)
-                        .setVibrate(new long[]{1000, 1000})
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(strTitle + ": " + strMsg))
+                        .setContentText(strTitle + ": " + strMsg)
+                        .setVibrate(new long[]{0, 500, 250, 500, 250, 500, 250, 500 })
                         .setLights(Color.RED, 3000, 3000)
                         .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                         .setAutoCancel(true)
                         .setGroup("RedAlertActivity")
                         .setPriority(NotificationCompat.PRIORITY_MAX)
-                        .setTicker(redAlertHebrew + ": " + msg)
-                        .addAction(actions.get(0))
-                        .addAction(actions.get(1))
+                        .setTicker(redAlertHebrew + " " + strTitle + ": " + strMsg)
                         .extend(wearableExtender);
 
 
@@ -195,38 +191,6 @@ public class GcmIntentService extends IntentService {//implements GoogleApiClien
 
     /*******************************************************************************************/
 
-
-
-//    @Override //ConnectionCallbacks
-//    public void onConnected(Bundle connectionHint) {
-////        mResolvingError = false;
-////        mStartActivityBtn.setEnabled(true);
-////        mSendPhotoBtn.setEnabled(mCameraSupported);
-////        Wearable.DataApi.addListener(mGoogleApiClient, this);
-//        Wearable.MessageApi.addListener(mGoogleApiClient, this);
-//        Wearable.NodeApi.addListener(mGoogleApiClient, this);
-//    }
-//
-//    @Override //NodeListener
-//    public void onPeerConnected(final Node peer) {
-//
-//
-//    }
-//
-//    @Override //MessageListener
-//    public void onMessageReceived(final MessageEvent messageEvent) {
-//
-//    }
-//
-//    @Override //ConnectionCallbacks
-//    public void onConnectionSuspended(int cause) {
-//
-//    }
-//
-//    @Override //NodeListener
-//    public void onPeerDisconnected(final Node peer) {
-//
-//    }
 
     private Collection<String> getNodes() {
         HashSet<String> results = new HashSet<String>();

@@ -54,4 +54,10 @@
     <string name="dummy_content">DUMMY\nCONTENT</string>
     <string name="title_activity_google_maps">Map</string>
 <string name="google_maps_key"></string>
+    <string name="sms_message_eng" >
+This is an automatic message. The contact just pressed on sos button in RedAlertSW application. Click here to see his location:
+    </string>
+     <string name="sms_message_heb" >
+        זוהי הודעה אוטומטית. איש הקשר לחץ על לחצן מצוקה באפליקציית צבע אדום. לחץ כאן כדי לראות את מיקומו:
+    </string>
 </resources>

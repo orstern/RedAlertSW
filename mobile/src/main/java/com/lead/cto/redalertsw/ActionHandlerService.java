@@ -2,6 +2,7 @@ package com.lead.cto.redalertsw;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.location.Location;
 import android.net.Uri;
 
 /**
@@ -41,7 +42,10 @@ public class ActionHandlerService extends IntentService {
 
 
     private void handleSendSms() {
-       EmergencyContactsActivity.SendSMSToContacts("Emergency SMS");
+        Location currentLocation = MainActivity.GetLastKnownLocation();
+        String uri = "http://maps.google.com/maps?q=" + currentLocation.getLatitude()+","+currentLocation.getLongitude();
+
+        EmergencyContactsActivity.SendSMSToContacts(Uri.parse(uri).toString());
     }
 
 
