@@ -1,44 +1,29 @@
 package com.lead.cto.redalertsw;
 
-import android.app.Activity;
 import android.app.ActivityGroup;
-import android.app.AlertDialog;
-import android.app.LocalActivityManager;
-import android.app.TabActivity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.os.AsyncTask;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
-import android.widget.AutoCompleteTextView;
-import android.widget.Button;
-import android.widget.GridView;
-import android.widget.ListView;
-import android.widget.Spinner;
 import android.widget.TabHost;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.google.android.gms.wearable.MessageApi;
-import com.google.android.gms.wearable.Node;
-import com.google.android.gms.wearable.NodeApi;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.wearable.Wearable;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
 
 
-public class MainActivity extends ActivityGroup {
+public class MainActivity extends ActivityGroup  implements GoogleApiClient.OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
     public static final String TAG = "MainActivityMobile";
 
     public static final String EXTRA_MESSAGE = "message";
@@ -62,8 +47,6 @@ public class MainActivity extends ActivityGroup {
     Context context;
 
     String regid;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,7 +112,7 @@ public class MainActivity extends ActivityGroup {
                     findViewById(R.id.lstContacts).setVisibility(View.GONE);
                     findViewById(R.id.btnAddCity).setVisibility(View.VISIBLE);
                     findViewById(R.id.lstCities).setVisibility(View.VISIBLE);
-                    findViewById(R.id.txtCities).setVisibility(View.VISIBLE);
+                    findViewById(R.id.txtSelectedCity).setVisibility(View.VISIBLE);
                     findViewById(R.id.lblCurrCity).setVisibility(View.VISIBLE);
 
                 }else if("EmergencyContactsTab".equals(tabId)){
@@ -138,11 +121,18 @@ public class MainActivity extends ActivityGroup {
                     findViewById(R.id.lstContacts).setVisibility(View.VISIBLE);
                     findViewById(R.id.btnAddCity).setVisibility(View.GONE);
                     findViewById(R.id.lstCities).setVisibility(View.GONE);
-                    findViewById(R.id.txtCities).setVisibility(View.GONE);
+                    findViewById(R.id.txtSelectedCity).setVisibility(View.GONE);
                     findViewById(R.id.lblCurrCity).setVisibility(View.GONE);
                 }
             }
         });
+
+        // Updating location for GPS
+        //LocationManager locationManager=    (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        //MyCurrentLocationListener locationListener = new MyCurrentLocationListener();
+        //locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, (LocationListener) locationListener);
+
+
     }
 
     // You need to do the Play Services APK check here too.
@@ -315,14 +305,35 @@ public class MainActivity extends ActivityGroup {
         editor.apply();
     }
 
-
-
-
-    private void initGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this )
+    protected synchronized void initGoogleApiClient() {
+        MainActivity.mGoogleApiClient = new GoogleApiClient.Builder(this )
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
                 .addApi( Wearable.API )
                 .build();
 
-        mGoogleApiClient.connect();
+        MainActivity.mGoogleApiClient.connect();
+    }
+
+    @Override
+    public void onConnected(Bundle connectionHint) {
+    }
+
+    public static Location GetLastKnownLocation() {
+        Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                MainActivity.mGoogleApiClient);
+
+        return mLastLocation;
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult connectionResult) {
+
     }
 }

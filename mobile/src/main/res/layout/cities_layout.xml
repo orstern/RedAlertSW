@@ -10,7 +10,7 @@
         android:id="@+id/lblCurrCity"
         android:textDirection="rtl"
         android:singleLine="false"
-        android:layout_alignTop="@+id/txtCities"
+        android:layout_alignTop="@+id/txtSelectedCity"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
@@ -26,8 +26,7 @@
     <AutoCompleteTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/txtCities"
-        android:textDirection="rtl"
+        android:id="@+id/txtSelectedCity"
         android:layout_alignBottom="@+id/btnAddCity"
         android:layout_toLeftOf="@+id/lblCurrCity"
         android:layout_toRightOf="@+id/btnAddCity"

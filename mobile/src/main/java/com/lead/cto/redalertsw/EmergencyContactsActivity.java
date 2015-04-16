@@ -3,6 +3,7 @@ package com.lead.cto.redalertsw;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Contacts;
@@ -12,12 +13,17 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.wearable.Wearable;
+
 import java.util.ArrayList;
 
 /**
  * Created by ofir on 4/15/2015.
  */
-public class EmergencyContactsActivity  extends Activity {
+public class EmergencyContactsActivity  extends Activity{
 
     private static final int PICK_CONTACT = 1234;
 
@@ -110,4 +116,8 @@ public class EmergencyContactsActivity  extends Activity {
             }
         }
     }
+
+
+
+
 }
