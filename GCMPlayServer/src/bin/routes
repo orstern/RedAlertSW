@@ -3,7 +3,7 @@
 # ~~~~
 
 # Home page
-GET  /                           			  controllers.Assets.at(path="/public", file="index.html")
+GET  /                           			  controllers.Assets.at(path="/public/app", file="index.html")
 GET  /push/register/:regId	  				  controllers.Push.register(regId: String)
 GET	 /push/unregister/:regId		    	  controllers.Push.unregister(regId: String)
 

@@ -34,6 +34,12 @@ public class CitiesDictionary {
 		}
 	}
 
+	public static JsonNode getAllCitiesByIds() {
+		ObjectMapper mapper = new ObjectMapper();
+		JsonNode node = mapper.convertValue(citiesById, JsonNode.class);
+		return node;
+	}
+
 	@SuppressWarnings("unchecked")
 	private static void loadCitiyesById() throws FileNotFoundException,
 			IOException, ParseException {

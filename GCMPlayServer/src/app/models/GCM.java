@@ -19,7 +19,7 @@ public class GCM {
 	private static String API_KEY = "AIzaSyB6KDOPgjpxk__9ASRnLW2brYJ0T03hrSE";
 	private static String PROJECT_ID = "548355374500";
 
-	public static void SendAlertNotification(List<City> cities) {
+	public static void SendAlertNotification(List<City> cities, String title) {
 		Logger.info("Sending notification..");
 		ObjectNode jsnMessage = new ObjectNode(JsonNodeFactory.instance);
 		jsnMessage.put("registration_ids", dal.getAllRegIds());
@@ -32,6 +32,7 @@ public class GCM {
 		}
 
 		jsnData.put("cities", citiesArray);
+		jsnData.put("title", title);
 		jsnMessage.put("data", jsnData);
 		Promise<WSResponse> promise = WS.url(GCM_URL)
 				.setHeader("Authorization", "key=" + API_KEY)

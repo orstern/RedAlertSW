@@ -1,0 +1,140 @@
+<h2 class="text-right">מדמה התראות</h2>
+<div class="row">
+    <div class="col-lg-4 text-right" style="float:right;direction:rtl">
+        <label>סנן מרחבים </label>
+        <input class="form-control" type="text" ng-model="citiesIdsFilters" />
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-4 text-right" style="float:right;direction:rtl">
+        <div class="form-group">
+            <label>רשימת מרחבים</label>
+            <select class="form-control" ng-model="newCityId" ng-options="cityId as cityId for cityId in citiesIds| filter: citiesIdsFilters"></select>
+        </div>
+    </div>
+    <div class="col-lg-2 text-right" style="float:right;direction:rtl">
+        <div class="form-group">
+            <button class="btn btn-default" style="margin-top:1.7em" ng-click="addedCitiesIds.push(newCityId)">הוסף</button>
+        </div>
+    </div>
+    <div class="col-lg-4 text-right" style="float:right;direction:rtl">
+        <label>בחר כותרת להתראה </label>
+        <input class="form-control" ng-model="notificationTitle" type="text" ng-model="alertTitle" />
+    </div>
+    <div class="col-lg-2 text-right" style="float:right;direction:rtl">
+        <div class="form-group">
+            <button class="btn btn-primary" style="margin-top:1.7em" ng-click="sendNotification()">שלח</button>
+        </div>
+    </div>
+</div>
+
+<div clas="row">
+    <div class="col-lg-12 text-center" style="height:100px;overflow-y:auto;float:right;direction:rtl">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>שם מרחב</th>
+                    <th>ערים</th>
+                </tr>
+            </thead>
+            <tbody class="text-right">
+                <tr ng-repeat="addedCityId in addedCitiesIds">
+                    <td>
+                        {{addedCityId}}
+                    </td>
+                    <td>
+                        <span ng-repeat="currCity in cities[addedCityId]">{{currCity.city+","}}</span>
+                    </td>
+                </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+
+<h2 class="text-right">מיפוי נפילות בזמן אמת</h2>
+<div class="row">
+    <div class="col-lg-12">
+        <map center="[ 32.0698,34.793]">
+            <marker id="11" position="32.0,34.75" on-click="showInfoWindow(event, '111')">
+            </marker>
+            <marker id="22" position="32.0,34.75" on-click="showInfoWindow(event, '222')">
+            </marker>
+
+            <marker id="44" position="32.04,34.781" on-click="showInfoWindow(event, '444')">
+            </marker>
+            <marker id="55" position="32.01,34.799" on-click="showInfoWindow(event, '555')">
+            </marker>
+            <marker id="66" position="32.05,34.762" on-click="showInfoWindow(event, '666')">
+            </marker>
+            <info-window id="111" visible-on-marker="11">
+                <div ng-non-bindable="">
+                    <div id="siteNotice"></div>
+                    <h1 id="firstHeading" class="firstHeading"></h1>
+                    <div id="bodyContent">
+                        <p>
+                            <b>דיווח 13:42</b>
+                            <br></br>
+                            <b>16/04/2015</b>
+                        </p>
+                    </div>
+                </div>
+            </info-window>
+            <info-window id="222" visible-on-marker="22">
+                <div ng-non-bindable="">
+                    <div id="siteNotice"></div>
+                    <h1 id="firstHeading" class="firstHeading"></h1>
+                    <div id="bodyContent">
+                        <p>
+                            <b>דיווח 13:50</b>
+                            <br></br>
+                            <b>16/04/2015</b>
+                        </p>
+                    </div>
+                </div>
+            </info-window>
+
+            <info-window id="444" visible-on-marker="44">
+                <div ng-non-bindable="">
+                    <div id="siteNotice"></div>
+                    <h1 id="firstHeading" class="firstHeading"></h1>
+                    <div id="bodyContent">
+                        <p>
+                            <b>דיווח 13:32</b>
+                            <br></br>
+                            <b>16/04/2015</b>
+                        </p>
+                    </div>
+                </div>
+            </info-window>
+            <info-window id="555" visible-on-marker="55">
+                <div ng-non-bindable="">
+                    <div id="siteNotice"></div>
+                    <h1 id="firstHeading" class="firstHeading"></h1>
+                    <div id="bodyContent">
+                        <p>
+                            <b>דיווח 13:35</b>
+                            <br></br>
+                            <b>16/04/2015</b>
+                        </p>
+                    </div>
+                </div>
+            </info-window>
+            <info-window id="666" visible-on-marker="66">
+                <div ng-non-bindable="">
+                    <div id="siteNotice"></div>
+                    <h1 id="firstHeading" class="firstHeading"></h1>
+                    <div id="bodyContent">
+                        <p>
+                            <b>דיווח 13:42</b>
+                            <br></br>
+                            <b>16/04/2015</b>
+                        </p>
+                    </div>
+                </div>
+            </info-window>
+        </map>
+    </div>
+</div>

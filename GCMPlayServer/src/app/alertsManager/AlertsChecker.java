@@ -29,7 +29,8 @@ public class AlertsChecker implements Runnable {
 						.createCitiesListOutOfData(jsonData);
 
 				// Send notification to registered users
-				GCM.SendAlertNotification(citiesToAlert);
+				GCM.SendAlertNotification(citiesToAlert, jsnAlert.get("title")
+						.asText());
 				Logger.info("found alert...sending notifications");
 			}
 		}
