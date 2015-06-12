@@ -1,0 +1,29 @@
+<link rel="stylesheet" href="styles/team.css">
+<div class="row">
+    <div class="col-lg-12 text-center">
+        <h2 class="section-heading">הצוות המדהים שלנו</h2>
+        <h3 class="section-subheading text-muted">המוטו שלנו:"אם אתה יכול לחלום את זה אתה יכול להגשים את זה"</h3>
+    </div>
+</div>
+<div class="row">
+    <div class="col-sm-3" ng-repeat="data in teamData">
+        <div class="team-member">
+            <img src={{data.Img}} class="img-responsive img-circle" alt="">
+            <h4> {{data.Name}} </h4>
+            <p class="text-muted">{{data.Role}}</p>
+            <ul class="list-inline social-buttons">
+                <li><a href={{data.Link}}><i class="fa fa-twitter"></i></a>
+                </li>
+                <li><a href={{data.Link}}><i class="fa fa-facebook"></i></a>
+                </li>
+                <li><a href={{data.Link}}><i class="fa fa-linkedin"></i></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-lg-8 col-lg-offset-2 text-center">
+        <p class="large text-muted">צוות של תותחים</p>
+    </div>
+</div>

@@ -18,13 +18,54 @@
     <!-- endbuild -->
     <!-- build:css({.tmp,app}) styles/main.css -->
     <link rel="stylesheet" href="vendor/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="vendor/font-awesome-4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="http://cdn.jsdelivr.net/alertifyjs/1.4.1/css/alertify.rtl.min.css"/>
+<!-- Default theme -->
+<link rel="stylesheet" href="http://cdn.jsdelivr.net/alertifyjs/1.4.1/css/themes/default.rtl.min.css"/>
+<!-- Semantic UI theme -->
+<link rel="stylesheet" href="http://cdn.jsdelivr.net/alertifyjs/1.4.1/css/themes/semantic.rtl.min.css"/>
+<!-- Bootstrap theme -->
+<link rel="stylesheet" href="http://cdn.jsdelivr.net/alertifyjs/1.4.1/css/themes/bootstrap.rtl.min.css"/>
     <link rel="stylesheet" href="styles/main.css">
+    <link rel="stylesheet" href="styles/index.css">
     <!-- endbuild -->
 </head>
 
-<body ng-app="missilesShobApp" class="container">
+<body data-ng-app="missilesShobApp" class="container">
+    <header>
+        <nav class="navbar navbar-fixed-top navbar-bootsnipp animate" role="navigation">
+            <div class="container">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-2">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <div class="animbrand">
+                        <a id="logo" class="navbar-brand animate" href="#">
+                            <img style="width:100px" src="../Vendor/images/logo%20homie2.png" alt="Logo" />
+                        </a>
+                    </div>
+                </div>
 
-    <button id="buttonSend" class="btn btn-primary">התראה אקראית</button>
+                <!-- Collect the nav links, forms, and other content for toggling -->
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-2">
+                    <ul class="nav navbar-nav navbar-right">
+                          <li><a class="animate" href="#Shelters">מרחבים מוגנים</a>
+                        </li>
+                        <li><a class="animate" href="#Falls">מפת נפילות</a>
+                        </li>
+                        <li><a class="animate" href="#Team">על הצוות</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+<!--    <button id="buttonSend" class="btn btn-primary">התראה אקראית</button>-->
     <!--[if lt IE 7]>
       <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
     <![endif]-->
@@ -77,10 +118,13 @@
 
     <script src="http://maps.google.com/maps/api/js"></script>
     <script src="http://rawgit.com/allenhwkim/angularjs-google-maps/master/build/scripts/ng-map.min.js"></script>
-
+    <script src="http//cdn.jsdelivr.net/alertifyjs/1.4.1/alertify.min.js"></script>
     <!-- build:js({.tmp,app}) scripts/scripts.js -->
     <script src="scripts/app.js"></script>
     <script src="scripts/controllers/main.js"></script>
+    <script src="scripts/controllers/teamCtl.js"></script>
+       <script src="scripts/controllers/fallCtl.js"></script>
+       <script src="scripts/controllers/shelterCtl.js"></script>
     <!-- endbuild -->
 </body>
 
